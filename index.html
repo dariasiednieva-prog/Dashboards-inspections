@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Рейтинг бортів — 2026</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f5f6f8; --card:#ffffff; --text:#1c2230; --muted:#6a7386; --line:#e3e6ec;
+  --s0:#2fa36b; --g1:#8cc63f; --s1:#e9c23a; --s2:#f08a3c; --s3:#d64545; --sn:#d9dce3;
+  --accent:#2b5fd9; --shadow:0 1px 3px rgba(20,30,50,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12151c; --card:#1b202b; --text:#e8ebf2; --muted:#98a1b5; --line:#2b3242;
+    --s0:#3bbf82; --g1:#9ad14f; --s1:#e2bb3c; --s2:#f0954c; --s3:#e05a5a; --sn:#333a4a; --accent:#6f9bff; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12151c; --card:#1b202b; --text:#e8ebf2; --muted:#98a1b5; --line:#2b3242;
+  --s0:#3bbf82; --g1:#9ad14f; --s1:#e2bb3c; --s2:#f0954c; --s3:#e05a5a; --sn:#333a4a; --accent:#6f9bff; --shadow:none;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-end;margin-bottom:20px}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px;max-width:640px}
+h2{font-size:17px;margin:28px 0 10px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-bottom:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.kpi .n{font-size:32px;font-weight:700;line-height:1}
+.kpi .l{color:var(--muted);font-size:13px;margin-top:6px}
+.kpi.good .n{color:var(--s0)} .kpi.warn .n{color:var(--s2)} .kpi.bad .n{color:var(--s3)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.toggle button{border:0;background:transparent;color:var(--text);padding:8px 14px;font-size:13px;cursor:pointer}
+.toggle button.on{background:var(--accent);color:#fff;font-weight:600}
+button.theme{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:12px}
+.tools{display:grid;gap:8px;justify-items:end}
+
+/* ranking */
+.rrow,.axis{display:grid;grid-template-columns:30px 64px 1fr 170px;align-items:center;gap:10px;margin-bottom:9px}
+.rk{font-weight:700;color:var(--muted);text-align:center}
+.tl{font-weight:700;font-size:16px;letter-spacing:.02em}
+.track{background:var(--sn);border-radius:8px;height:22px;position:relative;overflow:hidden}
+.fill{height:100%;border-radius:8px}
+.val{font-size:13px}
+.val b{font-size:16px}
+.up{color:var(--s0);font-weight:600} .down{color:var(--s3);font-weight:600} .flat{color:var(--muted)}
+.axis{margin:-2px 0 0}
+.axis .ax{position:relative;height:16px;font-size:11px;color:var(--muted)}
+.axis .ax span{position:absolute;transform:translateX(-50%)}
+.note{font-size:12.5px;color:var(--muted);margin-top:8px}
+.tie{font-size:11px;color:var(--muted);margin-left:6px}
+
+/* heat */
+.heat-wrap{overflow-x:auto}
+table.heat{border-collapse:separate;border-spacing:4px;width:100%;min-width:860px}
+.heat th{font-size:11px;color:var(--muted);font-weight:600;padding:2px 4px;text-align:center;line-height:1.25}
+.heat th.r{text-align:left;font-size:15px;color:var(--text)}
+.heat td{height:40px;border-radius:6px;text-align:center;font-size:13px;font-weight:600}
+.heat td.avg{font-size:14px;outline:2px solid var(--line)}
+.heat td.na{background:var(--sn);color:var(--muted);font-weight:400}
+
+/* dumbbell */
+.drow{display:grid;grid-template-columns:64px 1fr 190px;align-items:center;gap:10px;margin-bottom:14px}
+.dtrack{position:relative;height:26px}
+.dtrack .base{position:absolute;left:0;right:0;top:12px;height:2px;background:var(--sn)}
+.dtrack .ln{position:absolute;top:10px;height:6px;border-radius:3px}
+.dtrack .pt{position:absolute;top:4px;width:18px;height:18px;border-radius:50%;transform:translateX(-50%)}
+.dtrack .a{background:var(--card);border:3px solid var(--muted)}
+.dtrack .b{border:3px solid var(--card);box-shadow:0 0 0 1px var(--line)}
+.daxis{display:grid;grid-template-columns:64px 1fr 190px;gap:10px}
+.daxis .ax{position:relative;height:16px;font-size:11px;color:var(--muted)}
+.daxis .ax span{position:absolute;transform:translateX(-50%)}
+table.delta{border-collapse:separate;border-spacing:4px;width:100%;min-width:860px;margin-top:14px}
+.delta th{font-size:11px;color:var(--muted);font-weight:600;padding:2px 4px;text-align:center;line-height:1.25}
+.delta th.r{text-align:left;font-size:15px;color:var(--text)}
+.delta td{height:36px;border-radius:6px;text-align:center;font-size:13px;font-weight:600}
+
+footer{margin-top:26px;font-size:12px;color:var(--muted)}
+@media (max-width:720px){
+  .rrow,.axis{grid-template-columns:24px 52px 1fr 120px}
+}
+@media print{
+  body{background:#fff} .theme,.toggle{display:none} .card{box-shadow:none;break-inside:avoid}
+  .pbreak{break-before:page} h2{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>Рейтинг бортів</h1>
+    <div class="sub">Порівняння періодів огляду березень–квітень та липень–серпень 2026. Шкала оцінювання від 0 до&nbsp;9.</div>
+  </div>
+  <div class="tools">
+    <button class="theme" id="themeBtn" type="button">Світла / темна тема</button>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--s0)"></i>≥ 8,0</span>
+      <span><i class="dot" style="background:var(--g1)"></i>7,5–7,9</span>
+      <span><i class="dot" style="background:var(--s1)"></i>7,0–7,4</span>
+      <span><i class="dot" style="background:var(--s2)"></i>6,5–6,9</span>
+      <span><i class="dot" style="background:var(--s3)"></i>&lt; 6,5</span>
+    </div>
+  </div>
+</header>
+
+<section class="grid kpis" id="kpis"></section>
+
+<h2>Рейтинг бортів</h2>
+<div class="card">
+  <div class="toggle" id="toggle" style="margin-bottom:14px">
+    <button data-p="all" type="button" class="on">Поточний стан (усі борти)</button>
+    <button data-p="ma" type="button">Березень–квітень</button>
+    <button data-p="ja" type="button">Липень–серпень</button>
+  </div>
+  <div id="rank"></div>
+  <div class="note" id="rankNote"></div>
+</div>
+
+<h2>Оцінки за зонами</h2>
+<div class="card">
+  <div class="heat-wrap"><table class="heat" id="heat"></table></div>
+  <div class="note" id="heatNote"></div>
+</div>
+
+<h2 class="pbreak">Динаміка: березень–квітень → липень–серпень</h2>
+<div class="card">
+  <div id="dumb"></div>
+  <div class="note">Порівняння лише для бортів, які перевірялися в обох періодах. Порожня точка — березень–квітень, кольорова — липень–серпень. Шкала осі 6,0–8,0.</div>
+  <div class="heat-wrap"><table class="delta" id="delta"></table></div>
+</div>
+
+<footer>
+  Загальна оцінка = середнє всіх п'яти категорій анкети (Aircraft Exterior, Galleys, Cabin Crew Seats and Service/Entry Door Lining Panels, Lavatories, Passenger Seating Area) за порівняльними таблицями оглядів. У вкладці «Поточний стан» кожен борт показано за останнім наявним оглядом: для SQG і SAS це березень–квітень (огляду липень–серпень не було), для SAT — липень–серпень (огляду березень–квітень не було). Детальний розбір зауважень із анкет — в окремому документі.
+</footer>
+</div>
+
+<script>
+const CATS=[
+ ["ext","Екстер'єр","Aircraft Exterior"],
+ ["gal","Кухня","Galleys"],
+ ["crew","Екіпаж і панелі","Cabin Crew Seats and Service/Entry Door Lining Panels"],
+ ["lav","Туалети","Lavatories"],
+ ["pax","Пас. зона","Passenger Seating Area"]
+];
+const DATA={
+ ma:{
+  SQO:{ext:7.6,gal:6.7,crew:6.5,lav:7.5,pax:7.1,tot:7.0},
+  SQG:{ext:9.0,gal:7.0,crew:7.6,lav:6.9,pax:7.5,tot:7.5},
+  ERSMA:{ext:6.6,gal:6.6,crew:6.5,lav:6.0,pax:7.2,tot:6.5},
+  SAS:{ext:8.5,gal:7.0,crew:7.0,lav:6.5,pax:7.5,tot:7.3},
+  SAU:{ext:9.0,gal:6.4,crew:7.5,lav:6.7,pax:6.5,tot:7.2}
+ },
+ ja:{
+  SQO:{ext:9.0,gal:7.5,crew:8.0,lav:7.0,pax:7.3,tot:7.8},
+  ERSMA:{ext:8.6,gal:6.9,crew:7.3,lav:7.0,pax:7.6,tot:7.5},
+  SAU:{ext:9.0,gal:7.0,crew:8.0,lav:7.0,pax:7.5,tot:7.7},
+  SAT:{ext:8.3,gal:7.2,crew:7.6,lav:7.3,pax:7.4,tot:7.6}
+ }
+};
+
+const r2=x=>Math.round((x+1e-9)*100)/100;
+const f2=x=>r2(x).toFixed(2).replace(".",",");
+const f1=x=>(Math.round((x+1e-9)*10)/10).toFixed(1).replace(".",",");
+const sd2=x=>(x>0.004?"+":x<-0.004?"−":"")+f2(Math.abs(x));
+const sd1=x=>(x>0.04?"+":x<-0.04?"−":"")+f1(Math.abs(x));
+const int=d=>(d.ext+d.gal+d.crew+d.lav+d.pax)/5;
+const sc=v=>v>=8?"var(--s0)":v>=7.5?"var(--g1)":v>=7?"var(--s1)":v>=6.5?"var(--s2)":"var(--s3)";
+const tc=v=>(v>=8||v<6.5)?"#fff":"rgba(0,0,0,.78)";
+const both=Object.keys(DATA.ja).filter(t=>DATA.ma[t]);
+const catAvg=(p,c)=>{const a=Object.values(DATA[p]);return a.reduce((s,d)=>s+d[c],0)/a.length};
+const allTails=Array.from(new Set([...Object.keys(DATA.ma),...Object.keys(DATA.ja)]));
+function order(p){
+  let entries;
+  if(p==="all"){
+    entries=allTails.map(t=>{const period=DATA.ja[t]?"ja":"ma";return [t,DATA[period][t],period];});
+  }else{
+    entries=Object.entries(DATA[p]).map(([t,d])=>[t,d,p]);
+  }
+  const rows=entries.map(([t,d,period])=>({t,d,period,v:int(d)})).sort((a,b)=>b.v-a.v);
+  let rank=0,last=null;
+  rows.forEach((r,i)=>{ if(last===null||r2(r.v)!==last){rank=i+1;last=r2(r.v);} r.rank=rank; r.tie=rows.filter(x=>r2(x.v)===r2(r.v)).length>1; });
+  return rows;
+}
+
+// KPIs
+(function(){
+  const avgJA=Object.values(DATA.ja).reduce((s,d)=>s+int(d),0)/4;
+  const growth=both.reduce((s,t)=>s+int(DATA.ja[t])-int(DATA.ma[t]),0)/both.length;
+  const cats=CATS.map(([k,n])=>({n,v:catAvg("ja",k)})).sort((a,b)=>a.v-b.v);
+  const allRows=order("all");
+  const goodCount=allRows.filter(r=>r.v>=7.5).length;
+  const k=[
+   {n:f2(avgJA),l:"середній загальний бал, липень–серпень (4 борти)",c:""},
+   {n:sd2(growth),l:`середня зміна для ${both.length} бортів, що перевірялися в обох періодах`,c:"good"},
+   {n:f1(cats[0].v),l:`найслабша категорія: ${cats[0].n.toLowerCase()} (найсильніша — ${cats[cats.length-1].n.toLowerCase()}, ${f1(cats[cats.length-1].v)})`,c:"warn"},
+   {n:`${goodCount} з ${allRows.length}`,l:"бортів мають загальний бал 7,5 і вище (поточний стан)",c:"good"}
+  ];
+  document.getElementById("kpis").innerHTML=k.map(x=>`<div class="card kpi ${x.c}"><div class="n">${x.n}</div><div class="l">${x.l}</div></div>`).join("");
+})();
+
+// Ranking + heat
+let cur="all";
+const PLABEL={ja:"лип–сер",ma:"бер–кві"};
+function render(){
+  const rows=order(cur);
+  const pct=v=>Math.max(0,Math.min(100,(v-5)/4*100));
+  let h=rows.map(r=>{
+    let dl="";
+    if(r.period==="ja"&&DATA.ma[r.t]){const d=r.v-int(DATA.ma[r.t]);dl=`<span class="${d>0.004?'up':d<-0.004?'down':'flat'}">${d>0.004?'▲':d<-0.004?'▼':'●'} ${sd2(d)}</span> <span class="flat">до бер–кві</span>`;}
+    else if(cur==="all"&&r.period==="ma"){dl=`<span class="flat">немає огляду лип–сер (бер–кві)</span>`;}
+    return `<div class="rrow"><div class="rk">${r.rank}</div><div class="tl">${r.t}</div>
+      <div class="track"><div class="fill" style="width:${pct(r.v)}%;background:${sc(r.v)}"></div></div>
+      <div class="val"><b>${f2(r.v)}</b>${r.tie?'<span class="tie">рівний бал</span>':''}<br>${dl}</div></div>`;
+  }).join("");
+  h+=`<div class="axis"><div></div><div></div><div class="ax">${[5,6,7,8,9].map(v=>`<span style="left:${pct(v)}%">${v}</span>`).join("")}</div><div></div></div>`;
+  document.getElementById("rank").innerHTML=h;
+  if(cur==="all"){
+    document.getElementById("rankNote").textContent="Шкала смуг 5–9 (для наочності різниці). Кожен борт показано за останнім наявним оглядом; SQG і SAS — березень–квітень, немає огляду липень–серпень.";
+  }else{
+    const other=cur==="ja"?"ma":"ja";
+    const missing=Object.keys(DATA[other]).filter(t=>!DATA[cur][t]);
+    document.getElementById("rankNote").textContent=`Шкала смуг 5–9 (для наочності різниці). Немає огляду за цей період: ${missing.join(", ")}.`;
+  }
+
+  const zoneAvgSrc=cur==="all"?rows.map(r=>r.d):Object.values(DATA[cur]);
+  const zAvg=c=>zoneAvgSrc.reduce((s,d)=>s+d[c],0)/zoneAvgSrc.length;
+  const hh=`<tr><th></th>${CATS.map(c=>`<th>${c[2]}</th>`).join("")}<th>Загальна оцінка (середнє)</th></tr>`+
+   rows.map(r=>`<tr><th class="r">${r.t}${cur==="all"?`<br><small style="font-weight:400;color:var(--muted)">${PLABEL[r.period]}</small>`:""}</th>${CATS.map(c=>`<td style="background:${sc(r.d[c[0]])};color:${tc(r.d[c[0]])}">${f1(r.d[c[0]])}</td>`).join("")}<td class="avg" style="background:${sc(r.v)};color:${tc(r.v)}">${f2(r.v)}</td></tr>`).join("")+
+   `<tr><th class="r" style="font-size:12px;color:var(--muted)">Середнє по зоні</th>${CATS.map(c=>`<td class="na">${f1(zAvg(c[0]))}</td>`).join("")}<td class="na">${f2(rows.reduce((s,r)=>s+r.v,0)/rows.length)}</td></tr>`;
+  document.getElementById("heat").innerHTML=hh;
+  document.getElementById("heatNote").textContent=(cur==="all"?"Кожен борт — за останнім наявним оглядом (позначка під назвою борту). ":"Період: "+(cur==="ja"?"липень–серпень":"березень–квітень")+" 2026. ")+"«Загальна оцінка» — середнє всіх п'яти категорій анкети, включно з Aircraft Exterior.";
+  document.querySelectorAll("#toggle button").forEach(b=>b.classList.toggle("on",b.dataset.p===cur));
+}
+document.getElementById("toggle").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cur=b.dataset.p;render();});
+render();
+
+// Dumbbell
+(function(){
+  const lo=6,hi=8,pos=v=>Math.max(0,Math.min(100,(v-lo)/(hi-lo)*100));
+  const list=both.map(t=>({t,a:int(DATA.ma[t]),b:int(DATA.ja[t])})).sort((x,y)=>y.b-x.b);
+  let h=list.map(r=>{
+    const d=r.b-r.a, l=Math.min(pos(r.a),pos(r.b)), w=Math.abs(pos(r.b)-pos(r.a));
+    const col=d>=0?"var(--s0)":"var(--s3)";
+    return `<div class="drow"><div class="tl">${r.t}</div>
+     <div class="dtrack"><div class="base"></div><div class="ln" style="left:${l}%;width:${w}%;background:${col};opacity:.45"></div>
+      <div class="pt a" style="left:${pos(r.a)}%"></div><div class="pt b" style="left:${pos(r.b)}%;background:${sc(r.b)}"></div></div>
+     <div class="val">${f2(r.a)} → <b>${f2(r.b)}</b> <span class="${d>=0?'up':'down'}">${sd2(d)}</span></div></div>`;
+  }).join("");
+  h+=`<div class="daxis"><div></div><div class="ax">${[6,6.5,7,7.5,8].map(v=>`<span style="left:${pos(v)}%">${f1(v)}</span>`).join("")}</div><div></div></div>`;
+  document.getElementById("dumb").innerHTML=h;
+
+  const bg=d=>d>0?`rgba(47,163,107,${Math.min(.15+d*.4,.75)})`:d<0?`rgba(214,69,69,${Math.min(.25+Math.abs(d)*.5,.7)})`:"var(--sn)";
+  document.getElementById("delta").innerHTML=`<tr><th></th>${CATS.map(c=>`<th>${c[2]}</th>`).join("")}<th>Загальна оцінка</th></tr>`+
+   list.map(r=>`<tr><th class="r">${r.t}</th>${CATS.map(c=>{const d=DATA.ja[r.t][c[0]]-DATA.ma[r.t][c[0]];return `<td style="background:${bg(d)}">${sd1(d)}</td>`}).join("")}<td style="background:${bg(r.b-r.a)}">${sd2(r.b-r.a)}</td></tr>`).join("");
+})();
+
+document.getElementById("themeBtn").onclick=()=>{
+  const r=document.documentElement, dark=matchMedia("(prefers-color-scheme: dark)").matches;
+  const now=r.getAttribute("data-theme")||(dark?"dark":"light");
+  r.setAttribute("data-theme",now==="dark"?"light":"dark");
+};
+</script>
+</body>
+</html>

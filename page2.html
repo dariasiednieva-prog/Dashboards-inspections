@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Повторювані дефекти по бортах — жовтень–листопад 2026</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f5f6f8; --card:#ffffff; --text:#1c2230; --muted:#6a7386; --line:#e3e6ec;
+  --s0:#2fa36b; --s2:#f08a3c; --s3:#d64545; --sn:#d9dce3; --accent:#2b5fd9;
+  --shadow:0 1px 3px rgba(20,30,50,.08);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+header{margin-bottom:20px}
+h1{font-size:25px;margin:0 0 6px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px;max-width:760px}
+h2{font-size:19px;margin:30px 0 12px}
+.grid{display:grid;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+
+/* KPI */
+.kpis{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:6px}
+.kpi .n{font-size:32px;font-weight:700;line-height:1}
+.kpi .l{color:var(--muted);font-size:13px;margin-top:6px}
+.kpi.warn .n{color:var(--s2)}
+
+/* aircraft cards */
+.acard{grid-template-columns:repeat(auto-fit,minmax(440px,1fr))}
+.ah{font-size:20px;font-weight:700;letter-spacing:.03em;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+.subh{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 6px}
+.subh:first-of-type{margin-top:0}
+.subh .mild{text-transform:none;font-weight:400;font-size:12px}
+.item{padding:7px 0;font-size:13.6px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.item:first-of-type{border-top:0}
+.item .t{flex:1}
+.item .t .cat{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-right:6px}
+.item .t b{font-weight:600}
+.item .t span.m{display:block;color:var(--muted);font-size:12.3px;margin-top:1px}
+.tagstat{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap;align-self:flex-start}
+.tag-open{background:rgba(214,69,69,.12);color:var(--s3)}
+.tag-done{background:rgba(47,163,107,.14);color:var(--s0)}
+.tag-watch{background:rgba(240,138,60,.14);color:var(--s2)}
+.done .t b,.done .t span.m{text-decoration:line-through;opacity:.6}
+.nodata{color:var(--muted);font-size:13px;font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Повторювані дефекти по бортах</h1>
+  <div class="sub">Технічні дефекти та клінінгові зауваження по кожному борту — підготовка до планового техогляду в жовтні–листопаді 2026. Запах у туалетах віднесено до технічних дефектів там, де прибирання проблему не усуває.</div>
+</header>
+
+<section class="grid kpis" id="kpis"></section>
+
+<section class="grid acard" id="aircraft" style="margin-top:20px"></section>
+
+</div>
+
+<script>
+const AC=[
+ {t:"SQG",
+  defects:[
+   {d:"Кришки унітазів (усі туалети)",m:"Відшарування фарби, зношений вигляд; у 2 туалетах сліди сечі на кришках, одна чаша потребує точкового ремонту покриття",s:"open",cat:"Туалети"},
+   {d:"Запах у туалетах",m:"Хронічна проблема, фіксується практично постійно впродовж року — прибирання не усуває",s:"open",cat:"Туалети"},
+   {d:"Обшивка салону, ряд 18A",m:"Значне пошкодження внутрішньої обшивки",s:"open",cat:"Салон"},
+   {d:"Двері туалету",m:"Важко відкривались",s:"done",doneM:"Виконано — двері відрегульовано",cat:"Туалети"}
+  ],
+  cleaning:null},
+ {t:"ERSMA",
+  defects:[
+   {d:"Кришки унітазів",m:"Сколи фарби на чаші та сидінні — потребують заміни або усунення слідів зносу",s:"open",cat:"Туалети"},
+   {d:"Запах у туалетах",m:"Періодичний, системна причина — посилюється під час стоянок на землі, прибирання не вирішує",s:"open",cat:"Туалети"},
+   {d:"PSU 4A (блок освітлення/кондиціонування)",m:"Сколи фарби",s:"open",cat:"Салон"},
+   {d:"Жалюзі аварійних виходів",m:"Одна штора пошкоджена, одна відсутня",s:"open",cat:"Салон"},
+   {d:"Жалюзі 21A/24F",m:"Механізм, тріщини",s:"done",doneM:"Виконано",cat:"Салон"},
+   {d:"Оббивка сидіння біля інтеркому",m:"Розриви по краях",s:"done",doneM:"Виконано",cat:"Салон"}
+  ],
+  cleaning:{cat:"Туалети",date:"13.08.2026",items:[
+   ["Умивальник і фурнітура","Старі сліди від води"],
+   ["Зона навколо дзеркала","Патьоки по всій панелі"],
+   ["Підлога","Старий бруд"]
+  ]}},
+ {t:"SAT",
+  defects:[
+   {d:"Умивальник і фурнітура",m:"Пошкодження від корозії, накип",s:"open",cat:"Туалети"},
+   {d:"Бокові панелі та стеля",m:"Сколи фарби, стерті поверхні — потрібна реставрація",s:"open",cat:"Туалети"},
+   {d:"Запах у туалетах (хвостова частина)",m:"Різке погіршення у вересні після відносно спокійного періоду",s:"open",cat:"Туалети"}
+  ],
+  cleaning:{cat:"Салон",date:"29.07.2026",items:[
+   ["Вентиляційні решітки","Помітний пил"],
+   ["Блок вентиляції та освітлення (PSU)","Помітний пил"],
+   ["Стеля салону","Помітний пил"]
+  ]}},
+ {t:"SAU",
+  defects:[
+   {d:"Підставки для телефонів/планшетів",m:"Не тримаються, 7 місць: 30C, 25E, 24C, 13F, 7C, 5E, 37C",s:"open",cat:"Салон"},
+   {d:"Полиці для ручної поклажі (overhead bins)",m:"Сліди від валіз не відмиваються — потрібна реставрація",s:"open",cat:"Салон"},
+   {d:"Наклейка на дверцятах смітника",m:"Стара, потребує заміни",s:"open",cat:"Туалети"},
+   {d:"Запах у туалетах",m:"Тривала проблема упродовж 6 місяців (хвостова частина), у вересні — без зауважень",s:"watch",watchM:"Покращення не пов'язане з прибиранням — варто підтвердити, що причина усунена",cat:"Туалети"}
+  ],
+  cleaning:{cat:"Туалети",date:"16.08.2026",items:[
+   ["Дзеркало","Сліди фарби в одному з туалетів"],
+   ["Дозатори для мила","Помітний бруд"]
+  ]}},
+ {t:"SQO",
+  defects:[
+   {d:"Оббивка крісла екіпажу",m:"Видимі дірки",s:"open",cat:"Салон"},
+   {d:"Крісла 16D/18F",m:"Дірки, пошкодження оббивки",s:"open",cat:"Салон"},
+   {d:"Килимова доріжка",m:"Потерта, потребує заміни",s:"open",cat:"Салон"},
+   {d:"Запах у туалеті (хвостова частина, Lav E)",m:"Локалізований і циклічний — періодично повертається в одній зоні",s:"open",cat:"Туалети"}
+  ],
+  cleaning:{cat:"Туалети",date:"01.08.2026",items:[
+   ["Умивальник і фурнітура","Сліди іржі по верхньому краю"],
+   ["Чаша унітазу","Плями сечі знизу"],
+   ["Підлога","Старий бруд у кутах"]
+  ]}},
+ {t:"SAS",
+  defects:[
+   {d:"Панелі стін туалету",m:"Сколота фарба — роботи заплановано після повернення на базу RMO",s:"open",cat:"Туалети"}
+  ],
+  cleaning:null}
+];
+
+document.getElementById("aircraft").innerHTML=AC.map(a=>{
+  const defItems=a.defects.map(it=>{
+    const tag=it.s==="done"?`<span class="tagstat tag-done">Виконано</span>`:(it.s==="watch"?`<span class="tagstat tag-watch">Спостерігати</span>`:`<span class="tagstat tag-open">Відкрито</span>`);
+    const metaText=it.s==="done"?it.doneM:(it.s==="watch"?it.watchM:it.m);
+    return `<div class="item ${it.s==='done'?'done':''}"><div class="t"><span class="cat">${it.cat}</span><b>${it.d}</b><span class="m">${metaText}</span></div>${tag}</div>`;
+  }).join("");
+  let cleanBlock="";
+  if(a.cleaning){
+    const ci=a.cleaning.items.map(([t,d])=>`<div class="item"><div class="t"><span class="cat">${a.cleaning.cat}</span><b>${t}</b><span class="m">${d}</span></div></div>`).join("");
+    cleanBlock=`<div class="subh">Клінінг <span class="mild">· огляд ${a.cleaning.date}</span></div>${ci}`;
+  }
+  return `<div class="card">
+    <div class="ah">${a.t}</div>
+    <div class="subh">Дефекти</div>
+    ${defItems}
+    ${cleanBlock}
+  </div>`;
+}).join("");
+
+// KPIs
+(function(){
+  let open=0;
+  AC.forEach(a=>a.defects.forEach(it=>{ if(it.s!=="done") open++; }));
+  const odorAircraft=3; // SQG, ERSMA, SAU — підтверджена системна причина, не усувається прибиранням
+  const k=[
+   {n:String(open),l:"відкритих технічних дефектів по флоту",c:"warn"},
+   {n:`${odorAircraft} з 6`,l:"бортів мають проблему із запахом у туалетах — потребує інженерного втручання, не прибирання",c:"warn"}
+  ];
+  document.getElementById("kpis").innerHTML=k.map(x=>`<div class="card kpi ${x.c}"><div class="n">${x.n}</div><div class="l">${x.l}</div></div>`).join("");
+})();
+</script>
+</body>
+</html>

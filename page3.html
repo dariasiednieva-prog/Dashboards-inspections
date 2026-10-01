@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Моніторинг запахів у туалетах — Січень–Вересень</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f5f6f8; --card:#ffffff; --text:#1c2230; --muted:#6a7386; --line:#e3e6ec;
+  --s0:#2fa36b; --s1:#e9c23a; --s2:#f08a3c; --s3:#d64545; --sn:#d9dce3;
+  --accent:#2b5fd9; --shadow:0 1px 3px rgba(20,30,50,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12151c; --card:#1b202b; --text:#e8ebf2; --muted:#98a1b5; --line:#2b3242;
+    --s0:#3bbf82; --s1:#e2bb3c; --s2:#f0954c; --s3:#e05a5a; --sn:#333a4a; --accent:#6f9bff; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12151c; --card:#1b202b; --text:#e8ebf2; --muted:#98a1b5; --line:#2b3242;
+  --s0:#3bbf82; --s1:#e2bb3c; --s2:#f0954c; --s3:#e05a5a; --sn:#333a4a; --accent:#6f9bff; --shadow:none;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-end;margin-bottom:20px}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.kpi .n{font-size:34px;font-weight:700;line-height:1}
+.kpi .l{color:var(--muted);font-size:13px;margin-top:6px}
+.kpi.good .n{color:var(--s0)} .kpi.warn .n{color:var(--s2)} .kpi.bad .n{color:var(--s3)}
+h2{font-size:17px;margin:26px 0 10px}
+.fleet{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.tail{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.tail b{font-size:20px;letter-spacing:.03em}
+.badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;color:#fff}
+.b0{background:var(--s0)} .b1{background:var(--s1);color:#333} .b2{background:var(--s2)} .b3{background:var(--s3)}
+.trend{font-size:13px;color:var(--muted);margin-bottom:8px}
+.trend em{font-style:normal;font-weight:700}
+.up{color:var(--s0)} .down{color:var(--s3)} .flat{color:var(--muted)}
+.zone{font-size:13px;margin-bottom:8px}
+.zone span{color:var(--muted)}
+.card p{margin:0;font-size:13.5px}
+.spark{display:flex;gap:3px;margin:10px 0 8px}
+.spark i{flex:1;height:8px;border-radius:2px;background:var(--sn)}
+.heat-wrap{overflow-x:auto}
+table.heat{border-collapse:separate;border-spacing:4px;width:100%;min-width:640px}
+.heat th{font-size:12px;color:var(--muted);font-weight:600;text-align:center;padding:2px}
+.heat th.r{text-align:left;font-size:14px;color:var(--text)}
+.heat td{height:38px;border-radius:6px;cursor:pointer;text-align:center;font-size:11px;color:rgba(0,0,0,.55);transition:transform .1s}
+.heat td:hover{transform:scale(1.06)}
+.heat td.sel{outline:2px solid var(--accent)}
+.detail{margin-top:10px;min-height:52px;font-size:14px;background:var(--bg);border-radius:10px;padding:10px 12px;border:1px dashed var(--line)}
+.compare{display:grid;gap:10px}
+.crow{display:grid;grid-template-columns:52px 1fr 90px;align-items:center;gap:10px;font-size:13px}
+.bars{display:grid;gap:3px}
+.bar{height:10px;border-radius:5px;position:relative}
+.bar small{position:absolute;left:calc(100% + 6px);top:-3px;font-size:11px;color:var(--muted);white-space:nowrap}
+.two{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+ul.clean{margin:0;padding-left:18px;font-size:14px}
+ul.clean li{margin-bottom:6px}
+.pri{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:14px}
+.pri .p{flex:none;width:26px;height:26px;border-radius:50%;color:#fff;font-weight:700;display:grid;place-items:center;font-size:13px}
+footer{margin-top:28px;font-size:12px;color:var(--muted)}
+button.theme{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:12px}
+@media print{
+  body{background:#fff} .theme{display:none} .card{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <h1>Моніторинг запахів у туалетах флоту</h1>
+    <div class="sub">Січень – Вересень · 6 бортів · оновлені висновки станом на вересень</div>
+  </div>
+  <div style="display:grid;gap:8px;justify-items:end">
+    <button class="theme" id="themeBtn" type="button">Світла / темна тема</button>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--s0)"></i>Без зауважень</span>
+      <span><i class="dot" style="background:var(--s1)"></i>Легкий запах</span>
+      <span><i class="dot" style="background:var(--s2)"></i>Помітний запах</span>
+      <span><i class="dot" style="background:var(--s3)"></i>Сильний запах</span>
+      <span><i class="dot" style="background:var(--sn)"></i>Немає запису</span>
+    </div>
+  </div>
+</header>
+
+<section class="grid kpis" id="kpis"></section>
+
+<h2>Борти за системністю проблеми</h2>
+<section class="grid fleet" id="fleet"></section>
+
+<h2>Динаміка по місяцях</h2>
+<div class="card">
+  <div class="heat-wrap"><table class="heat" id="heat"></table></div>
+  <div class="detail" id="detail">Натисніть на клітинку, щоб побачити оригінальний запис за місяць.</div>
+</div>
+
+<h2>Системність: у скількох місяцях були скарги</h2>
+<div class="card">
+  <div class="compare" id="compare"></div>
+  <div class="legend" style="margin-top:12px"><span>Частка місяців зі скаргами (від легкого запаху і вище)</span></div>
+</div>
+
+<section class="grid two" style="margin-top:14px">
+  <div class="card">
+    <h2 style="margin-top:0">Ключові висновки</h2>
+    <ul class="clean">
+      <li><b>Проблема системна:</b> 4 із 6 бортів (SQG, SAU, SMA, SQO) мають скарги у 6 і більше місяцях із 9. Це не поодинокі випадки.</li>
+      <li><b>Прибирання дає лише тимчасовий ефект:</b> на SMA після deep cleaning запах системи зберігся; на SQG і SQO у червні хвіст знову довелося чистити.</li>
+      <li><b>Запах повертається циклічно:</b> SMA і SQO двічі поверталися після «чистого» місяця, SQO — щоразу в хвості.</li>
+      <li><b>SQG</b> — жодного «чистого» місяця з 8; проблема постійна, змінюється лише інтенсивність.</li>
+      <li><b>SMA:</b> запах іде із системи в усіх туалетах і посилюється на стоянках — ознака технічної причини, а не гігієни.</li>
+      <li><b>Хвіст — повторювана зона</b> у SQO, SAU, SQG (Aft R/H) та SAT.</li>
+      <li><b>SAU:</b> два місяці покращення після шести місяців проблем — потрібно підтвердити стійкість.</li>
+      <li><b>SAT</b> — один епізод у вересні після майже чистого року; поки не системна проблема.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2 style="margin-top:0">Пріоритети за системністю</h2>
+    <div class="pri"><span class="p b3">1</span><div><b>SQG</b> — хронічна: скарги щомісяця. Потрібна першопричина (передній туалет, підлога, Aft R/H), а не чергове чищення.</div></div>
+    <div class="pri"><span class="p b3">2</span><div><b>SMA</b> — рецидивуюча: технічна перевірка системи, особливо поведінка на стоянках.</div></div>
+    <div class="pri"><span class="p b2">3</span><div><b>SQO</b> — циклічна в одній зоні (хвіст, Lav E): діагностика саме цієї зони.</div></div>
+    <div class="pri"><span class="p b1">4</span><div><b>SAU</b> — покращення: моніторити стійкість, не зняти з контролю передчасно.</div></div>
+    <div class="pri"><span class="p b1">5</span><div><b>SAT</b> — спостерігати: якщо запах повториться, перейде в системну категорію.</div></div>
+    <div class="pri"><span class="p b0">6</span><div><b>SAS</b> — стабільно; базове підтримання свіжості.</div></div>
+  </div>
+</section>
+
+<footer>
+  Системність = частка місяців зі скаргами від легкого запаху і вище; «повернення» = «чистий» місяць, після якого запах знову помітний або сильний. Рівень запаху (0–3) — умовна оцінка на основі текстових записів таблиці моніторингу; оригінальні формулювання доступні в підказці по клітинці.
+</footer>
+</div>
+
+<script>
+const months=["Січ","Лют","Бер","Кві","Тра","Чер","Лип","Сер","Вер"];
+const LBL=["Без зауважень","Легкий запах","Помітний запах","Сильний запах"];
+const COL=["var(--s0)","var(--s1)","var(--s2)","var(--s3)"];
+const N=null;
+const fleet=[
+ {id:"SQG",status:"Хронічна проблема",zone:"Передній туалет (FWD), іноді задній правий",
+  s:[N,3,3,2,2,1,3,3,1],
+  t:[N,"Лютий: сильний запах","Березень: поганий запах у передньому туалеті","Квітень: запах у FWD та AFT right","Травень: запах присутній","Червень: туалети в хвостовій необхідно чистити, стан не критичний","Липень: запах присутній, особливо сильний у FWD","Серпень: FWD і Aft R/H — сильний запах (підлога), Aft L/H — легкий","Вересень: легкий запах в усіх туалетах"],
+  note:"Проблема ніколи не зникала — має хронічний характер. Інтенсивність коливається від сильного до легкого, але запах супроводжує всі туалети постійно."},
+ {id:"SAU",status:"Покращення",zone:"Хвостова частина, особливо лівий задній туалет",
+  s:[2,2,3,3,2,2,1,1,0],
+  t:["Січень: запах у хвостових туалетах","Лютий: запах у хвостових туалетах","Березень: стійкий запах в туалетах","Квітень: задній лівий туалет «жахливий»","Травень: запах все ще присутній","Червень: хвостова частина має запах","Липень: запах відсутній / AFT Right — легкий","Серпень: туалети без зауважень / FWD — легкий запах","Вересень: туалети без зауважень"],
+  note:"Позитивний тренд закріпився — статус «без зауважень» повністю збережено. Раніше проблемна хвостова частина прийшла до норми."},
+ {id:"SMA",status:"Періодично",zone:"Передні і задні туалети",
+  s:[3,3,1,0,2,0,2,3,1],
+  t:["Січень: їдкий запах в туалетах","Лютий: запах після deep cleaning, смердить система","Березень: легкий запах присутній","Квітень: запахів немає","Травень: запах присутній","Червень: без зауважень","Липень: присутній помітний поганий запах / немає запаху","Серпень: без зауважень / сильний запах в усіх туалетах","Вересень: легкий запах із системи в усіх туалетних кімнатах, посилюється під час стоянок на землі; FWD — присутній запах"],
+  note:"Глобального усунення проблеми не сталося. Запах перейшов у розряд технічних — проблема із системою, яка дає про себе знати під час стоянок."},
+ {id:"SQO",status:"Локальна проблема",zone:"Хвостова частина (Lav E)",
+  s:[2,0,3,N,2,1,0,2,2],
+  t:["Січень: смердять задні туалети","Лютий: запахи відсутні","Березень: сильний запах у Lav E","—","Травень: запах присутній, Lav E у хвостовій частині","Червень: туалети в хвостовій необхідно чистити, стан не критичний","Липень: запах відсутній","Серпень: Aft R/H — стійкий неприємний запах / туалети без зауважень","Вересень: запах у туалетах у хвостовій частині"],
+  note:"Чітко локалізований (хвіст) і циклічний характер: запах періодично зникає, але регулярно повертається в одній і тій самій зоні."},
+ {id:"SAT",status:"Помітне погіршення",zone:"Туалети в хвостовій частині",
+  s:[0,0,0,0,0,1,0,1,3],
+  t:["Січень–Травень: практично всі запити «чек»","","","","","Червень: хвостову необхідно чистити","Липень: запах відсутній","Серпень: туалети без зауважень / легкий запах","Вересень: сильний запах в туалетах у хвостовій частині"],
+  note:"Негативна динаміка за останній місяць. З'явилася гостра проблема у хвості, яка потребує позапланової уваги."},
+ {id:"SAS",status:"Стабільно найкращий",zone:"Туалети потребують освіжувача",
+  s:[N,0,0,0,0,0,0,0,1],
+  t:[N,"Лютий: без зауважень","Березень: в порядку","Квітень: запах нормальний","Травень: в нормальному стані","Червень: без зауважень","Липень: запах відсутній","Серпень: туалети без зауважень","Вересень: без зауважень / стан середній, потрібен освіжувач для комфорту"],
+  note:"Найстабільніший результат у флоті. Потрібне лише базове підтримання свіжості (освіжувач), системних збоїв немає."}
+];
+const cur=f=>f.s[8], prev=f=>f.s[7];
+
+// KPIs
+const cnt=fn=>fleet.filter(fn).length;
+const rec=f=>f.s.filter(v=>v!==null).length;
+const cm=f=>f.s.filter(v=>v!==null&&v>=1).length;
+const relapses=f=>f.s.reduce((a,v,i)=>a+((i>0&&f.s[i-1]===0&&v>=2)?1:0),0);
+const kp=[
+ {n:fleet.length,l:"бортів у моніторингу",c:""},
+ {n:cnt(f=>cm(f)>=6),l:"борти зі скаргами у 6+ місяцях із 9 — системна проблема",c:"bad"},
+ {n:cnt(f=>relapses(f)>=2),l:"борти, де запах двічі повертався після «чистого» місяця",c:"warn"},
+ {n:cnt(f=>cm(f)<=3),l:"борти без системної проблеми (разовий епізод / стабільно)",c:"good"}
+];
+document.getElementById("kpis").innerHTML=kp.map(k=>`<div class="card kpi ${k.c}"><div class="n">${k.n}</div><div class="l">${k.l}</div></div>`).join("");
+
+// Fleet cards
+const tier={SQG:["Системна · хронічна","b3"],SMA:["Системна · рецидивуюча","b3"],SQO:["Системна · локальна (хвіст)","b2"],SAU:["Покращення · перевірити стійкість","b1"],SAT:["Разовий епізод · спостерігати","b1"],SAS:["Стабільно","b0"]};
+const order=["SQG","SMA","SQO","SAU","SAT","SAS"].map(id=>fleet.find(f=>f.id===id));
+document.getElementById("fleet").innerHTML=order.map(f=>{
+  const p=Math.round(cm(f)/rec(f)*100), col=p>=70?"var(--s3)":p>=40?"var(--s2)":"var(--s0)";
+  const rl=relapses(f);
+  const spark=f.s.map((v,i)=>`<i title="${months[i]}: ${v===null?'немає запису':LBL[v]}" style="background:${v===null?'var(--sn)':COL[v]}"></i>`).join("");
+  return `<div class="card">
+    <div class="tail"><b>${f.id}</b><span class="badge ${tier[f.id][1]}">${tier[f.id][0]}</span></div>
+    <div class="trend">Скарги у <em style="color:${col}">${cm(f)} з ${rec(f)}</em> місяців${rl>=2?` · запах повертався <em class="down">${rl} рази</em> після «чистого» місяця`:''}</div>
+    <div class="zone"><span>Проблемна зона:</span> ${f.zone}</div>
+    <div class="spark">${spark}</div>
+    <p>${f.note}</p>
+    <div class="trend" style="margin:8px 0 0">Вересень: ${LBL[cur(f)].toLowerCase()}</div>
+  </div>`}).join("");
+
+// Heatmap
+const heat=document.getElementById("heat"), detail=document.getElementById("detail");
+heat.innerHTML=`<tr><th></th>${months.map(m=>`<th>${m}</th>`).join("")}</tr>`+
+ fleet.map((f,r)=>`<tr><th class="r">${f.id}</th>${f.s.map((v,i)=>`<td data-r="${r}" data-i="${i}" title="${f.t[i]||''}" style="background:${v===null?'var(--sn)':COL[v]}">${v===null?'':v}</td>`).join("")}</tr>`).join("");
+heat.addEventListener("click",e=>{
+  const td=e.target.closest("td"); if(!td) return;
+  heat.querySelectorAll("td.sel").forEach(x=>x.classList.remove("sel")); td.classList.add("sel");
+  const f=fleet[td.dataset.r], i=+td.dataset.i;
+  detail.innerHTML=`<b>${f.id}</b> · ${months[i]}: ${f.t[i]||"Немає окремого запису"}`;
+});
+
+// Systemic bars
+document.getElementById("compare").innerHTML=order.map(f=>{
+  const p=Math.round(cm(f)/rec(f)*100), col=p>=70?"var(--s3)":p>=40?"var(--s2)":"var(--s0)";
+  return `<div class="crow"><b>${f.id}</b><div style="background:var(--sn);border-radius:6px;height:14px"><div style="width:${p}%;height:14px;border-radius:6px;background:${col}"></div></div><span style="text-align:right;font-weight:600">${cm(f)} з ${rec(f)}</span></div>`}).join("");
+
+// Theme toggle
+document.getElementById("themeBtn").onclick=()=>{
+  const r=document.documentElement, dark=matchMedia("(prefers-color-scheme: dark)").matches;
+  const now=r.getAttribute("data-theme")||(dark?"dark":"light");
+  r.setAttribute("data-theme",now==="dark"?"light":"dark");
+};
+</script>
+</body>
+</html>
